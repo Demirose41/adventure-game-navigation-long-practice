@@ -58,6 +58,29 @@ const server = http.createServer((req, res) => {
 
     // Phase 3: GET /rooms/:roomId
 
+    if (req.method === "GET" && req.url.startsWith("/rooms/")){
+      const urlParts = req.url.split("/");
+      if( urlParts.length === 3 ){
+        const roomId = urlParts[2];
+        const room = world.rooms[roomId];
+        console.log(room)
+        const htmlTemplate = fs.readFileSync("./views/room.html",'utf-8');
+        const htmlPage = htmlTemplate
+        .replace(/#{roomName}/g, room.name)
+        .replace(/#{inventory}/g, player.inventoryToString())
+        .replace(/#{roomItems}/g, room.itemsToString())
+        .replace(/#{exits}/g, room.exitsToString());
+
+        const resBody = htmlPage;
+        res.statusCode = 200;
+        res.setHeader("Content-type", 'text/html');
+        res.write(resBody)
+        return res.end();
+      }
+      res.statusCode = 404;
+      return res.end()
+    }
+
     // Phase 4: GET /rooms/:roomId/:direction
 
     // Phase 5: POST /items/:itemId/:action
