@@ -125,6 +125,36 @@ const server = http.createServer((req, res) => {
     
 
     // Phase 5: POST /items/:itemId/:action
+    // Create a route handler for POST /items/:itemId/:action.
+
+    if (req.method === "POST" && req.url.startsWith("/items/")){
+      const urlParts = req.url.split("/");
+      if(urlParts.length === 4){
+      // Obtain the current itemId and player action by parsing the URL.
+        const itemId = urlParts[2];
+        const action = urlParts[3];
+        res.setHeader("Location", `/rooms/${player.currentRoom.id}`)
+        res.statusCode = 302;
+        switch(action){
+          case 'eat':
+            player.eatItem(itemId);
+            res.end();
+            return
+          case 'drop':
+            player.dropItem(itemId);
+            res.end();
+            return
+          case 'take':
+            player.takeItem(itemId);
+            res.end();
+            return
+          default:
+            console.log('invalid actions')
+        }
+        return
+      }
+    }
+
 
     // Phase 6: Redirect if no matching route handlers
   })
